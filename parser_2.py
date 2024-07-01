@@ -1,9 +1,13 @@
 import requests
 import re
+import os
 import json
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
 
 
+load_dotenv()
+url = os.getenv('URL_2')
 
 def format_working_hours(schedule):
     days_map = {0: 'Вс', 1: 'Пн', 2: 'Вт', 3: 'Ср', 4: 'Чт', 5: 'Пт', 6: 'Сб'}
@@ -17,11 +21,11 @@ def format_working_hours(schedule):
             formatted_hours.append(f"{days_map[start_day]} {open_time} - {close_time}")
         else:
             formatted_hours.append(f"{days_map[start_day]} - {days_map[end_day]} {open_time} - {close_time}")
-
     return formatted_hours
 
+
 def get_parser():
-    response = requests.get('https://omsk.yapdomik.ru/about')
+    response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
     location_elements = soup.find_all('script', string=lambda text: text and 'window.initialState = {' in text)
     phone_n = soup.find('a', href=lambda x: x.startswith('tel:'))
